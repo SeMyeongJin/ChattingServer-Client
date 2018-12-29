@@ -1,4 +1,5 @@
 #include "ChatServer.h"
+#include "Log.h"
 
 
 
@@ -138,7 +139,7 @@ VOID ChatServer::AcceptLoop()
 
 		} while (TRUE);
 
-		printf("[client connected] : IP = %s, Port = %d\n", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port));
+		Log::WriteLog(_T("[client connected] : IP = %S, Port = %d\n"), inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port));
 
 		std::thread* workThread = new std::thread(&ChatServer::ProcessClient, this, clientSock);
 	}
@@ -202,7 +203,7 @@ DWORD ChatServer::ProcessClient(SOCKET _sock)
 
 	closesocket(sock);
 
-	printf("[client Disconnected] : IP = %s, Port = %d\n", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port));
+	Log::WriteLog(_T("[client Disconnected] : IP = %S, Port = %d\n"), inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port));
 
 	return 0;
 }
@@ -261,7 +262,7 @@ BOOL ChatServer::PROC_PACKET_LOGIN(SOCKET* _sock, std::string& _id, char* _data)
 	if (!WriteAllPacket(_sock, message, false))
 		return false;
 
-	printf("[TCP/%s:%d] Login ID : %s\n", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), _id.c_str());
+	Log::WriteLog(_T("[TCP/%S:%d] Login ID : %S\n"), inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), _id.c_str());
 
 	return true;
 }
@@ -273,7 +274,7 @@ BOOL ChatServer::PROC_PACKET_DATA(SOCKET* _sock, std::string& _id, char* _data)
 	if (!WriteAllPacket(_sock, message, false))
 		return false;
 
-	printf("[TCP/%s:%d] %s\n", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), message.c_str());
+	Log::WriteLog(_T("[TCP/%S:%d] %S\n"), inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), message.c_str());
 
 	return true;
 }
